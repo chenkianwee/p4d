@@ -1,0 +1,247 @@
+.navbar {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.navbar a {
+  float: left;
+  font-size: 14px;
+  color: white;
+  text-align: center;
+  padding: 12px 14px;
+  text-decoration: none;
+}
+
+.navbar a:hover, .views:hover .viewsbtn, .maps:hover .mapsbtn, .extrusions:hover .extrusionsbtn, .colours:hover .coloursbtn {
+  background-color: grey;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Create four equal columns that floats next to each other */
+.column {
+  font-size: 12px;
+  float: left;
+  width: 10%;
+  height: auto;
+  padding: none;
+  border: 1px solid black
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* =============================================================== */
+/* THE VIEW DROPDOWN LIST */
+/* =============================================================== */
+.views {
+  float: left;
+  overflow: hidden;
+}
+
+.views .viewsbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+  cursor: pointer;
+}
+
+.views-content {
+  display: none;
+  color: white;
+  position: absolute;
+  background-color: #333;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.views-content option {
+  float: none;
+  color:white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+/* =============================================================== */
+/* THE MAPS DROPDOWN LIST */
+/* =============================================================== */
+.maps {
+  float: left;
+  overflow: hidden;
+}
+
+.maps .mapsbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+  cursor: pointer;
+}
+
+.maps-content {
+  display: none;
+  color: white;
+  list-style-type: none;
+  position: absolute;
+  background-color: #333;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+#mapsInput {
+  color: black;
+  background-color:white;
+  font-size: 12px;
+}
+
+.maps-select {
+  display: block;
+  list-style-type: none;
+  color: white;
+  position: absolute;
+  background-color: #333;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+ .maps-select option {
+  float: none;
+  color:white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+/* =============================================================== */
+/* THE EXTRUDE DROPDOWN LIST */
+/* =============================================================== */
+.extrusions {
+  float: left;
+  overflow: hidden;
+}
+
+.extrusions .extrusionsbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+  cursor: pointer;
+}
+
+.extrusions-content {
+  display: none;
+  position: absolute;
+  background-color: #333;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+#extrusionsInput {
+  color: black;
+  background-color:white;
+  font-size: 12px;
+}
+
+.extrusions-select {
+  display: block;
+  color: white;
+  position: absolute;
+  background-color: #333;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+ .extrusions-select option {
+  float: none;
+  color:white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+/* =============================================================== */
+/* THE EXTRUDE DROPDOWN LIST */
+/* =============================================================== */
+.colours {
+  float: left;
+  overflow: hidden;
+}
+
+.colours .coloursbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+  cursor: pointer;
+}
+
+.colours-content {
+  display: none;
+  position: absolute;
+  background-color: #333;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+#colourssInput {
+  color: black;
+  background-color:white;
+  font-size: 12px;
+}
+
+.colours-select {
+  display: block;
+  color: white;
+  position: absolute;
+  background-color: #333;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+ .colours-select option {
+  float: none;
+  color:white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+#cesiumContainer {
+  height: 94vh;
+}
+/* show the dropdwon menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button)*/
+.show {display:block;}
