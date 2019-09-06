@@ -1,3 +1,15 @@
+function resetAllSelection() {
+  document.getElementById('myViews').selectedIndex = 0;
+  document.getElementById('selectExtrusions').selectedIndex = 0;
+  document.getElementById('selectColours').selectedIndex = 0;
+  var myMaps = document.getElementById('myMaps');
+  var mapOptions = myMaps.getElementsByTagName('input');
+  for (i=0; i<mapOptions.length - 1; i++) {
+    var input = mapOptions[i+1];
+    input.checked = false;
+  }
+}
+
 function switchOnLoaded(selectedValue, loadedDict){
   loaded = loadedDict[selectedValue];
   loaded.then(function(dataSource) {

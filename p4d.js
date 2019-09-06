@@ -2,36 +2,28 @@
 // Main Script
 // ==========================================================================
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4Zjc2MGIyNi05N2NhLTQ2ZjItOTk1My1mYTU2MmEyM2EzYTciLCJpZCI6MTQzNTEsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1NjUyODk5NTF9.viMI8njkZyAJVsXDUsKAuc6ZnIN7NDJCdfU9Pi7po3I';
+//Create the cesium viewer
 var viewer = new Cesium.Viewer('cesiumContainer', {
-  terrainProvider : Cesium.createWorldTerrain()});
-// var viewer = new Cesium.Viewer('cesiumContainer', {
-//     imageryProvider : Cesium.createTileMapServiceImageryProvider({
-//         url : Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII')
-//     }),
-//     baseLayerPicker : false,
-//     geocoder : false
-// });
-
-// viewer.shouldAnimate = true;
+    imageryProvider : Cesium.createTileMapServiceImageryProvider({
+        url : Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII')
+    })
+});
 // Fly to a nice overview of the city.
 viewer.camera.flyTo({
     destination : new Cesium.Cartesian3.fromDegrees(-74.654683, 40.341393,5000),
 });
-
-document.getElementById('myViews').selectedIndex = 0;
-// document.getElementById('selectMaps').selectedIndex = 0;
-
+//Reset all the selections
+resetAllSelection();
+//Prepare all the selections
+loadFalseColourSelect();
+//Load all the urls of the maps
 var mapLoadedDict = {};
-var mapDict = {"footprint": 'https://raw.githubusercontent.com/chenkianwee/geojsonexamples/master/buildings_2015_princeton.geojson',
-              "road": 'https://raw.githubusercontent.com/chenkianwee/geojsonexamples/master/roads_2015_princeton.geojson',
-              "imp": 'https://raw.githubusercontent.com/chenkianwee/geojsonexamples/master/imps_2015_princeton.geojson',
-              "pervious": 'https://raw.githubusercontent.com/chenkianwee/geojsonexamples/master/pervious_2015_princeton.geojson'};
-
+var mapUrl = 'https://raw.githubusercontent.com/chenkianwee/geojsonexamples/master/json_url/mapurl.json';
+//Load all the urls of the falsecolour maps
 var colourLoadedDict = {};
-var colourDict = {'treeheight': 'https://raw.githubusercontent.com/chenkianwee/geojsonexamples/master/treeheights_2015_princeton.geojson'};
-
+var colourUrl = 'https://raw.githubusercontent.com/chenkianwee/geojsonexamples/master/json_url/coloururl.json'
 // ==========================================================================
-// Functions
+// View Functions
 // ==========================================================================
 function showViews() {
   document.getElementById('myViews').classList.toggle("show");
@@ -88,8 +80,8 @@ function filterMaps() {
 
 function changeMap(mapSelect) {
   var selectMaps = document.getElementById(mapSelect);
-  var map2Load = mapDict[mapSelect];
   var isChecked = selectMaps.checked
+
   if(isChecked == true) {
     // Check if this map layer has already been loaded
     if(mapSelect in mapLoadedDict) {
@@ -98,40 +90,44 @@ function changeMap(mapSelect) {
         dataSource.show = true;
       })
     } else {
-      if (mapSelect === 'footprint') {
-        var geoJson = Cesium.GeoJsonDataSource.load(map2Load,
-        {
-          stroke: Cesium.Color.WHITE,
-          fill: Cesium.Color.GREY.withAlpha(1.0),
-          strokeWidth: 3
-        });
-      } else if (mapSelect === 'road') {
-        var geoJson = Cesium.GeoJsonDataSource.load(map2Load,
-        {
-          stroke: Cesium.Color.WHITE,
-          fill: Cesium.Color.BLACK.withAlpha(1.0),
-          strokeWidth: 3
-        });
-      } else if (mapSelect === 'imp') {
-        var geoJson = Cesium.GeoJsonDataSource.load(map2Load,
-        {
-          stroke: Cesium.Color.WHITE,
-          fill: Cesium.Color.BROWN.withAlpha(1.0),
-          strokeWidth: 3
-        });
-      } else if (mapSelect === 'pervious') {
-        var geoJson = Cesium.GeoJsonDataSource.load(map2Load,
-        {
-          stroke: Cesium.Color.WHITE,
-          fill: Cesium.Color.GREEN.withAlpha(1.0),
-          strokeWidth: 3
-        });
-      }
+      $.getJSON(mapUrl, function(data){
+        map2Load = data[mapSelect];
+        if (mapSelect === 'footprint') {
+          var geoJson = Cesium.GeoJsonDataSource.load(map2Load,
+          {
+            stroke: Cesium.Color.WHITE,
+            fill: Cesium.Color.GREY.withAlpha(1.0),
+            strokeWidth: 3
+          });
+        } else if (mapSelect === 'road') {
+          var geoJson = Cesium.GeoJsonDataSource.load(map2Load,
+          {
+            stroke: Cesium.Color.WHITE,
+            fill: Cesium.Color.BLACK.withAlpha(1.0),
+            strokeWidth: 3
+          });
+        } else if (mapSelect === 'imp') {
+          var geoJson = Cesium.GeoJsonDataSource.load(map2Load,
+          {
+            stroke: Cesium.Color.WHITE,
+            fill: Cesium.Color.BROWN.withAlpha(1.0),
+            strokeWidth: 3
+          });
+        } else if (mapSelect === 'pervious') {
+          var geoJson = Cesium.GeoJsonDataSource.load(map2Load,
+          {
+            stroke: Cesium.Color.WHITE,
+            fill: Cesium.Color.GREEN.withAlpha(1.0),
+            strokeWidth: 3
+          });
+        }
 
-      viewer.dataSources.add(geoJson);
-      mapLoadedDict[mapSelect] = geoJson;
+        viewer.dataSources.add(geoJson);
+        mapLoadedDict[mapSelect] = geoJson;
+      })
     }
-  } else {
+  }
+  else {
     loaded = mapLoadedDict[mapSelect];
     loaded.then(function(dataSource) {
       dataSource.show = false;
@@ -186,41 +182,56 @@ function filterColours() {
 }
 
 function changeColours(selectedValue) {
-  console.log(selectedValue);
+  //console.log(selectedValue);
+  //---------------------------
+  //NO MAPS ARE SELECTED
+  //---------------------------
   if(selectedValue === "") {
     // turn off everything that is loaded
     switchOffAllLoaded(colourLoadedDict);
-  } else if (selectedValue === "treeheight") {
+  }
+  //---------------------------------
+  //THE TREE HEIGHT MAP IS SELECTED
+  //---------------------------------
+  else if (selectedValue === "treeheight") {
     if(selectedValue in colourLoadedDict) {
       // just reload what is loaded, and turn off the rest of the layers
       switchOnLoaded(selectedValue, colourLoadedDict);
-    } else {
+    }
+    else {
       // load and process the data
-      geojsonUrl = colourDict[selectedValue];
-      $.getJSON(geojsonUrl, function(data){
-        // load the chosen data & change the falosecolour bar
-        var label = selectedValue + "(m)";
-        geoJsonData = loadFalseColour(data, label);
-        var promise = Cesium.GeoJsonDataSource.load(geoJsonData, {
-          strokeWidth: 0,
-          stroke: Cesium.Color.WHITE
-        });
-        promise.then(function(dataSource) {
-          viewer.dataSources.add(dataSource);
-          var entities = dataSource.entities.values;
-          for (var i=0; i<entities.length;i++) {
-            var entity = entities[i];
-            entity.polygon.height = 40;
-          }
-          viewer.zoomTo(dataSource);
+      $.getJSON(colourUrl, function(data){
+        geojsonUrl = data[selectedValue];
+        $.getJSON(geojsonUrl, function(data){
+          // load the chosen data & change the falosecolour bar
+          var label = selectedValue + "(m)";
+          geoJsonData = loadFalseColour(data, label);
+          var promise = Cesium.GeoJsonDataSource.load(geoJsonData, {
+            strokeWidth: 0,
+            stroke: Cesium.Color.WHITE
+          });
+          promise.then(function(dataSource) {
+            viewer.dataSources.add(dataSource);
+            var entities = dataSource.entities.values;
+            for (var i=0; i<entities.length;i++) {
+              var entity = entities[i];
+              entity.polygon.height = 40;
+            }
+            viewer.zoomTo(dataSource);
+          })
+          colourLoadedDict[selectedValue] = promise;
         })
-
-        colourLoadedDict[selectedValue] = promise;
       })
     }
-  } else if (selectedValue === "roofirrad") {
+  }
+  //---------------------------------
+  //---------------------------------
+  else if (selectedValue === "roofirrad") {
     console.log("roof");
-  } else if (selectedValue === "bldgenergy") {
+  }
+  //---------------------------------
+  //---------------------------------
+  else if (selectedValue === "bldgenergy") {
     console.log("building energy");
   }
 }

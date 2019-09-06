@@ -1,3 +1,18 @@
+function loadFalseColourSelect() {
+  // load the monthly roof solar
+  var colours = document.getElementById('selectColours');
+  var mthRoofSolarList = ["Roof Solar Jan", "Roof Solar Feb", "Roof Solar Mar", "Roof Solar Apr",
+                          "Roof Solar May", "Roof Solar Jun", "Roof Solar Jul", "Roof Solar Aug",
+                          "Roof Solar Sep", "Roof Solar Oct", "Roof Solar Nov", "Roof Solar Dec"];
+
+  for (var i = 0; i <12; i++) {
+    var option = document.createElement('option');
+    option.value = "roofsolar" + i.toString();
+    option.textContent = mthRoofSolarList[i];
+    colours.appendChild(option);
+  }
+}
+
 function loadFalseColour(geoJsonData, label, inverse = false){
   var valueList = [];
   features = geoJsonData.features;
@@ -19,7 +34,7 @@ function loadFalseColour(geoJsonData, label, inverse = false){
     var b = rgb.b.toString();
     var rgbString = "rgb(" + r + "," + g + "," + b + ")"
     properties["fill"] = rgbString;
-    properties["fill-opacity"] = 0.2;
+    properties["fill-opacity"] = 0.6;
   });
 
   return geoJsonData;
