@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <script src="https://cesiumjs.org/releases/1.60/Build/Cesium/Cesium.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link href="https://cesiumjs.org/releases/1.60/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="p4d.css">
@@ -37,40 +38,40 @@
       </div>
       <!-- The Extrusions Layers -->
       <div class="extrusions">
-        <button onclick="showExtrusions()" class="extrusionsbtn">ExtrusionsLayers
+        <button onclick="showExtrusions()" class="extrusionsbtn">ExtrusionsLayers(None)
           <i class="fa fa-caret-down"></i>
         </button>
         <div id="myExtrusions" class="extrusions-content">
           <input type="text" placeholder="Search.." id="extrusionsInput" onkeyup="filterExtrusions()">
           <select id="selectExtrusions" class="extrusions-select" onchange="changeExtrusion(this.selectedIndex)">
             <option value="">Select Extrusions</option>
-            <option value="building">Building Energy</option>
-            <option value="building">Irradiation</option>
-            <option value="figure">Frontal Area Index</option>
+            <option value="treeheight">Tree Height</option>
+            <option value="roofirrad">Irradiation on Roof</option>
+            <option value="bldgenergy">Building Energy</option>
           </select>
         </div>
       </div>
       <!-- The FalseColour Layers -->
       <div class="colours">
-        <button onclick="showColours()" class="coloursbtn">FalseColoursLayers
+        <button onclick="showColours()" class="coloursbtn">FalseColoursLayers(None)
           <i class="fa fa-caret-down"></i>
         </button>
         <div id="myColours" class="colours-content">
           <input type="text" placeholder="Search.." id="coloursInput" onkeyup="filterColours()">
-          <select id="selectColours" class="colours-select" onchange="changeColour(this.selectedIndex)">
+          <select id="selectColours" class="colours-select" onchange="changeColours(this.value)">
             <option value="">Select FalseColours</option>
             <option value="treeheight">Tree Height</option>
-            <option value="building">Irradiation</option>
-            <option value="building">Building Energy</option>
-            <option value="figure">Frontal Area Index</option>
+            <option value="roofirrad">Irradiation on Roof</option>
+            <option value="bldgenergy">Building Energy</option>
           </select>
         </div>
       </div>
 
       <a style="float:right" href="#">About</a>
     </div>
-    <div class="row">
-      <div class="column" style="background-color:#aaa;">Colour Legend (units): 0-10</div>
+
+    <div class="row" id="falseColour">
+      <div class="column" id="first-last" style="background-color:#aaa;">ColourLegend(unit):0-10</div>
       <div class="column" style="background-color:#bbb;">10-20</div>
       <div class="column" style="background-color:#ccc;">20-30</div>
       <div class="column" style="background-color:#ddd;">30-40</div>
@@ -79,9 +80,12 @@
       <div class="column" style="background-color:#ddd;">60-70</div>
       <div class="column" style="background-color:#ddd;">70-80</div>
       <div class="column" style="background-color:#ddd;">80-90</div>
-      <div class="column" style="background-color:#ddd;" style ="float:right;">90-100</div>
+      <div class="column" id="first-last" style="background-color:#ddd;">90-100</div>
     </div>
+
     <div id="cesiumContainer"></div>
+    <script type="text/javascript" src="utility.js"></script>
+    <script type="text/javascript" src="falsecolour.js"></script>
     <script type="text/javascript" src="p4d.js"></script>
   </body>
 </html>

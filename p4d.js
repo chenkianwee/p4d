@@ -2,8 +2,17 @@
 // Main Script
 // ==========================================================================
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4Zjc2MGIyNi05N2NhLTQ2ZjItOTk1My1mYTU2MmEyM2EzYTciLCJpZCI6MTQzNTEsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1NjUyODk5NTF9.viMI8njkZyAJVsXDUsKAuc6ZnIN7NDJCdfU9Pi7po3I';
-var viewer = new Cesium.Viewer('cesiumContainer');
-viewer.shouldAnimate = true;
+var viewer = new Cesium.Viewer('cesiumContainer', {
+  terrainProvider : Cesium.createWorldTerrain()});
+// var viewer = new Cesium.Viewer('cesiumContainer', {
+//     imageryProvider : Cesium.createTileMapServiceImageryProvider({
+//         url : Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII')
+//     }),
+//     baseLayerPicker : false,
+//     geocoder : false
+// });
+
+// viewer.shouldAnimate = true;
 // Fly to a nice overview of the city.
 viewer.camera.flyTo({
     destination : new Cesium.Cartesian3.fromDegrees(-74.654683, 40.341393,5000),
@@ -21,32 +30,9 @@ var mapDict = {"footprint": 'https://raw.githubusercontent.com/chenkianwee/geojs
 var colourLoadedDict = {};
 var colourDict = {'treeheight': 'https://raw.githubusercontent.com/chenkianwee/geojsonexamples/master/treeheights_2015_princeton.geojson'};
 
-var cv  = document.getElementById('cv'),
-// console.log(cv);
-ctx = cv.getContext('2d');
-
-for(var i = 0; i <= 255; i++) {
-    ctx.beginPath();
-
-    // var color = 'rgb(255, ' + i + ', ' + i + ')';
-    var color = 'rgb(255, 50, 50)';
-    ctx.fillStyle = color;
-
-    ctx.fillRect(i * 2, 0, 2, 4000);
-}
-
-// cv.onclick = function(e) {
-//     var x = e.offsetX,
-//         y = e.offsetY,
-//         p = ctx.getImageData(x, y, 1, 1),
-//         x = p.data;
-//
-//     alert('Color: rgb(' + x[0] + ', ' + x[1] + ', ' + x[2] + ')');
-// };
 // ==========================================================================
 // Functions
 // ==========================================================================
-// Views Function
 function showViews() {
   document.getElementById('myViews').classList.toggle("show");
 }
@@ -196,5 +182,45 @@ function filterColours() {
     } else {
       a[i].style.display = "none";
     }
+  }
+}
+
+function changeColours(selectedValue) {
+  console.log(selectedValue);
+  if(selectedValue === "") {
+    // turn off everything that is loaded
+    switchOffAllLoaded(colourLoadedDict);
+  } else if (selectedValue === "treeheight") {
+    if(selectedValue in colourLoadedDict) {
+      // just reload what is loaded, and turn off the rest of the layers
+      switchOnLoaded(selectedValue, colourLoadedDict);
+    } else {
+      // load and process the data
+      geojsonUrl = colourDict[selectedValue];
+      $.getJSON(geojsonUrl, function(data){
+        // load the chosen data & change the falosecolour bar
+        var label = selectedValue + "(m)";
+        geoJsonData = loadFalseColour(data, label);
+        var promise = Cesium.GeoJsonDataSource.load(geoJsonData, {
+          strokeWidth: 0,
+          stroke: Cesium.Color.WHITE
+        });
+        promise.then(function(dataSource) {
+          viewer.dataSources.add(dataSource);
+          var entities = dataSource.entities.values;
+          for (var i=0; i<entities.length;i++) {
+            var entity = entities[i];
+            entity.polygon.height = 40;
+          }
+          viewer.zoomTo(dataSource);
+        })
+
+        colourLoadedDict[selectedValue] = promise;
+      })
+    }
+  } else if (selectedValue === "roofirrad") {
+    console.log("roof");
+  } else if (selectedValue === "bldgenergy") {
+    console.log("building energy");
   }
 }
