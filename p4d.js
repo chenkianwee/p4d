@@ -116,7 +116,7 @@ function changeMap(mapSelect) {
         } else if (mapSelect === 'pervious') {
           var geoJson = Cesium.GeoJsonDataSource.load(map2Load,
           {
-            stroke: Cesium.Color.WHITE,
+            stroke: Cesium.Color.TRANSPARENT,
             fill: Cesium.Color.GREEN.withAlpha(1.0),
             strokeWidth: 3
           });
@@ -182,18 +182,18 @@ function filterColours() {
 }
 
 function changeColours(selectedValue) {
-  //console.log(selectedValue);
+  console.log(selectedValue);
   //---------------------------
   //NO MAPS ARE SELECTED
   //---------------------------
-  if(selectedValue === "") {
-    // turn off everything that is loaded
-    switchOffAllLoaded(colourLoadedDict);
-  }
+  // turn off everything that is loaded
+  switchOffAllLoaded(colourLoadedDict);
+  switchOffSelected(mapLoadedDict, ["roofs"]);
+
   //---------------------------------
   //THE TREE HEIGHT MAP IS SELECTED
   //---------------------------------
-  else if (selectedValue === "treeheight") {
+  if (selectedValue === "treeheight") {
     if(selectedValue in colourLoadedDict) {
       // just reload what is loaded, and turn off the rest of the layers
       switchOnLoaded(selectedValue, colourLoadedDict);
@@ -207,15 +207,16 @@ function changeColours(selectedValue) {
           var label = selectedValue + "(m)";
           geoJsonData = loadFalseColour(data, label);
           var promise = Cesium.GeoJsonDataSource.load(geoJsonData, {
-            strokeWidth: 0,
-            stroke: Cesium.Color.WHITE
+            stroke: Cesium.Color.TRANSPARENT
           });
+          console.log("finished reading the geojson data");
           promise.then(function(dataSource) {
             viewer.dataSources.add(dataSource);
             var entities = dataSource.entities.values;
             for (var i=0; i<entities.length;i++) {
               var entity = entities[i];
-              entity.polygon.height = 40;
+              // console.log(entity.properties.tree_height._value);
+              // entity.polygon.height = 40;
             }
             viewer.zoomTo(dataSource);
           })
@@ -226,12 +227,72 @@ function changeColours(selectedValue) {
   }
   //---------------------------------
   //---------------------------------
-  else if (selectedValue === "roofirrad") {
+  else if (selectedValue === "bldgenergy") {
     console.log("roof");
   }
   //---------------------------------
   //---------------------------------
-  else if (selectedValue === "bldgenergy") {
-    console.log("building energy");
+  else {
+    var isRoofSolar = selectedValue.includes("roofsolar");
+    if (isRoofSolar === true) {
+      // load the roof plan
+      if("roofs" in mapLoadedDict) {
+        loaded = mapLoadedDict["roofs"];
+        loaded.then(function(dataSource) {
+          dataSource.show = true;
+        })
+      } else {
+        $.getJSON(mapUrl, function(data){
+          roofplan = data["roofs"];
+          var promise = Cesium.GeoJsonDataSource.load(roofplan,
+          {
+            stroke: Cesium.Color.WHITE,
+            fill: Cesium.Color.GREY.withAlpha(1.0),
+            strokeWidth: 3
+          });
+          promise.then(function(dataSource) {
+            viewer.dataSources.add(dataSource);
+            var entities = dataSource.entities.values;
+            for (var i=0; i<entities.length;i++) {
+              var entity = entities[i];
+              // console.log(entity.properties.tree_height._value);
+              var roofHeight = entity.properties.zmax._value;
+              entity.polygon.height = roofHeight;
+            }
+            viewer.zoomTo(dataSource);
+          })
+          mapLoadedDict["roofs"] = promise;
+        });
+      }
+      // read the solar value from json
+      $.getJSON(colourUrl, function(data){
+        var roofSolarJsonUrl = data[selectedValue];
+        $.getJSON(roofSolarJsonUrl, function(jdata) {
+          console.log(jdata.length);
+          dynamicFalseColour(mapLoadedDict["roofs"], jdata);
+        });
+
+        // var promise = Cesium.GeoJsonDataSource.load(roofplan,
+        // {
+        //   stroke: Cesium.Color.WHITE,
+        //   fill: Cesium.Color.GREY.withAlpha(1.0),
+        //   strokeWidth: 3
+        // });
+        //
+        // promise.then(function(dataSource) {
+        //   viewer.dataSources.add(dataSource);
+        //   var entities = dataSource.entities.values;
+        //   for (var i=0; i<entities.length;i++) {
+        //     var entity = entities[i];
+        //     // console.log(entity.properties.tree_height._value);
+        //     var roofHeight = entity.properties.zmax._value;
+        //     entity.polygon.height = roofHeight;
+        //   }
+        //   viewer.zoomTo(dataSource);
+        // })
+        //
+        // mapLoadedDict["roofs"] = promise;
+      });
+    }
   }
 }

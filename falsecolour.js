@@ -13,12 +13,53 @@ function loadFalseColourSelect() {
   }
 }
 
+function dynamicChangeColour(entities, valueJson) {
+  // returns a property that scales another property by a constant factor.
+    return new Cesium.CallbackProperty(function(time, result) {
+        result = property.getValue(time, result);
+        result = result * scalingFactor;
+        return result;
+    }, property.isConstant);
+}
+
+function dynamicFalseColour(polygonPromise, valueJson){
+  polygonPromise.then(function(dataSource) {
+    var entities = dataSource.entities.values;
+    for(i=0; i<entities.length; i++){
+      var entity = entities[i];
+      var polygon = entity.polygon;
+      polygon.material.color.setValue({"red":1.0, "green":0.0, "blue":0.0, "alpha":1.0});
+      // console.log(polygon.material.color);
+      // polygon.material = Cesium.Material.fromType('Color', {
+      //                     color : new Cesium.Color(255, 0, 0, 1.0)
+      //                   });
+
+
+      // polygon.material.uniforms.color = new Cesium.Color(1.0, 0.0, 0.0, 1.0);
+
+      // entity.polygon.material = [255,0,0,255];
+      // var material = {"solidColor":
+      //                   {"color":[
+      //                               {"interval":"2019-09-10T00:00:00Z/2019-10-09T04:00:00Z",
+      //                                 "rgba":[255,0,0,255]},
+      //                               {"interval":"2019-10-09T12:00:00Z/2019-10-09T16:30:00Z",
+      //                                 "rgba":[255,0,0,255]}
+      //                             ]
+      //                   }
+      //                 };
+
+      // entity.polygon.material = material
+
+    }
+  })
+}
+
 function loadFalseColour(geoJsonData, label, inverse = false){
   var valueList = [];
   features = geoJsonData.features;
 
   features.forEach(function(feature){
-    valueX = feature.properties.tree_height;
+    valueX = feature.properties.tree_heigh;
     valueList.push(valueX);
   });
 
@@ -26,7 +67,7 @@ function loadFalseColour(geoJsonData, label, inverse = false){
   var minValue = Math.min.apply(null, valueList);
   setupFalseColourBar(minValue, maxValue, label, inverse = inverse)
   features.forEach(function(feature){
-    valueX = feature.properties.tree_height;
+    valueX = feature.properties.tree_heigh;
     rgb = pseudoColour(valueX, minValue, maxValue, inverse = inverse)
     properties = feature.properties;
     var r = rgb.r.toString();

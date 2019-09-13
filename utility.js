@@ -34,7 +34,22 @@ function switchOffAllLoaded(loadedDict){
     keys.forEach(function(element){
       loadedColour = loadedDict[element];
       loadedColour.then(function(dataSource) {
-        dataSource.show = false;})
+        dataSource.show = false;
+      })
+    })
+  }
+}
+
+function switchOffSelected(loadedDict, selectedList){
+  var keys = Object.keys(loadedDict);
+  if(keys.length !=0) {
+    selectedList.forEach(function(key){
+      if(key in loadedDict) {
+        loaded = mapLoadedDict[key];
+        loaded.then(function(dataSource) {
+          dataSource.show = false;
+        });
+      }
     })
   }
 }

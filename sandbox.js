@@ -39,3 +39,5 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
 //               "pervious": 'https://raw.githubusercontent.com/chenkianwee/geojsonexamples/master/pervious_2015_princeton.geojson'};
 // var colourDict = {'treeheight': 'https://raw.githubusercontent.com/chenkianwee/geojsonexamples/master/treeheights_2015_princeton.geojson',
 //                   'solar':'test'};
+
+// var solarMth = selectedValue.slice(-1);
